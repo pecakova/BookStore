@@ -1,0 +1,27 @@
+﻿@model IEnumerable<BookStore.Models.Book>
+
+@{
+    ViewData["Title"] = "Store";
+}
+
+<h2 class="my-4">Store</h2>
+<div class="row">
+    @foreach(var book in Model)
+    {
+        <div class="col-3">
+            <div class="card my-2 store-card">
+               <a class="a-cleanup" asp-controller="Store" asp-action="Details" asp-route-id="@book.Id">
+                    <img src="@book.FrontPage" alt="Alternate Text" class="card-img-top card-img-custom" />
+                    <div class="card-body" style="height: 6em;">
+                        <h5 class="mb-3">@book.Title</h5>
+                    </div>
+                    <div class="card-body">
+                        <a asp-controller="" asp-action="" asp-route-id="@book.Id" class="btn btn-primary float-rigth"><i class="fa-solid fa-cart-shopping"></i></a>
+                    
+                    </div> 
+                </a>
+            </div>
+        </div>
+
+    }
+</div>

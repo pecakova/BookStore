@@ -20,10 +20,19 @@ namespace BookStore.Models
         public string? DownloadUrl { get; set; }
         public int AuthorId { get; set; }
         public Author? Author { get; set; }
-        public ICollection<BookGenre>? Genre { get; set; }
-        
-        public ICollection<Review>? Review { get; set; } //One-to-many relationship with Review
+        public ICollection<BookGenre>? BookGenres { get; set; }
+
+        public ICollection<Review>? Reviews { get; set; } //One-to-many relationship with Review
         public ICollection<UserBooks>? UserBooks { get; set; }
+        public double AverageRating()
+        {
+            if(Reviews != null && Reviews.Any())
+            {
+                int totalRating = (int)Reviews.Sum(r => r.Rating);
+                return (double)totalRating / Reviews.Count;
+            }
+            return 0;
+        }
 
 
     }

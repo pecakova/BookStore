@@ -35,17 +35,17 @@ namespace BookStore.Data
 
             builder.Entity<BookGenre>()
             .HasOne(bg => bg.Book)
-            .WithMany(b => b.Genre)
+            .WithMany(b => b.BookGenres)
             .HasForeignKey(bg => bg.BookId);
 
             builder.Entity<BookGenre>()
             .HasOne(bg => bg.Genre)
-            .WithMany(g => g.Book)
+            .WithMany(g => g.BookGenres)
             .HasForeignKey(bg => bg.GenreId);
 
             builder.Entity<Review>()
             .HasOne(r => r.Book)
-            .WithMany(b => b.Review)
+            .WithMany(b => b.Reviews)
             .HasForeignKey(r => r.BookId);
 
             builder.Entity<UserBooks>()

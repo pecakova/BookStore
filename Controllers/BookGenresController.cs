@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BookStore.Data;
 using BookStore.Models;
 
+
 namespace BookStore.Controllers
 {
     public class BookGenresController : Controller
@@ -22,7 +23,8 @@ namespace BookStore.Controllers
         // GET: BookGenres
         public async Task<IActionResult> Index()
         {
-            return View(await _context.BookGenre.ToListAsync());
+            var bookProject1Context = _context.BookGenre.Include(b => b.Book).Include(b => b.Genre);
+            return View(await bookProject1Context.ToListAsync());
         }
 
         // GET: BookGenres/Details/5
@@ -34,6 +36,8 @@ namespace BookStore.Controllers
             }
 
             var bookGenre = await _context.BookGenre
+                .Include(b => b.Book)
+                .Include(b => b.Genre)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (bookGenre == null)
             {
@@ -46,6 +50,8 @@ namespace BookStore.Controllers
         // GET: BookGenres/Create
         public IActionResult Create()
         {
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title");
+            ViewData["GenreId"] = new SelectList(_context.Set<Genre>(), "Id", "Id");
             return View();
         }
 
@@ -62,6 +68,8 @@ namespace BookStore.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", bookGenre.BookId);
+            ViewData["GenreId"] = new SelectList(_context.Set<Genre>(), "Id", "Id", bookGenre.GenreId);
             return View(bookGenre);
         }
 
@@ -116,6 +124,7 @@ namespace BookStore.Controllers
             return View(bookGenre);
         }
 
+
         // GET: BookGenres/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -125,6 +134,8 @@ namespace BookStore.Controllers
             }
 
             var bookGenre = await _context.BookGenre
+                .Include(b => b.Book)
+                .Include(b => b.Genre)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (bookGenre == null)
             {
