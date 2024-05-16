@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookStore.Data;
 using BookStore.Models;
+using BookStore.ViewModels;
+using BookStore.ViewModel;
+
 
 namespace BookStore.Controllers
 {
@@ -20,9 +23,28 @@ namespace BookStore.Controllers
         }
 
         // GET: Authors
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchName, string searchSurname)
         {
-            return View(await _context.Author.ToListAsync());
+            var authorQuery = _context.Author.Include(a => a.Books).AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchName))
+            {
+                authorQuery = authorQuery.Where(a => a.FirstName.Contains(searchName));
+            }
+
+            if (!string.IsNullOrEmpty(searchSurname))
+            {
+                authorQuery = authorQuery.Where(a => a.LastName.Contains(searchSurname));
+            }
+
+            var viewModel = new BooksAuthorViewModel
+            {
+                SearchName = searchName,
+                SearchSurname = searchSurname,
+                Authors = await authorQuery.ToListAsync()
+            };
+
+            return View(viewModel);
         }
 
         // GET: Authors/Details/5
@@ -54,7 +76,7 @@ namespace BookStore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,BirthDate,Nationality,Genre")] Author author)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Date,Nationality,Gender")] Author author)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +108,7 @@ namespace BookStore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,BirthDate,Nationality,Genre")] Author author)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Date,Nationality,Gender")] Author author)
         {
             if (id != author.Id)
             {

@@ -7,7 +7,7 @@ namespace BookStore.Models
         public int Id { get; set; }
         [Required]
         [StringLength(100, MinimumLength = 3)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
         public int? YearPublished { get; set; }
         public int? NumPages { get; set; }
         [StringLength(int.MaxValue)]
@@ -18,7 +18,7 @@ namespace BookStore.Models
         public string? FrontPage { get; set;  }
         [StringLength(int.MaxValue)]
         public string? DownloadUrl { get; set; }
-        public int AuthorId { get; set; }
+        public int? AuthorId { get; set; }
         public Author? Author { get; set; }
         public ICollection<BookGenre>? BookGenres { get; set; }
 

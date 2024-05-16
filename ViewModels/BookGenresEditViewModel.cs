@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using BookStore.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookStore.ViewModels
 {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace BookStore.ViewModel
 
 {
-    public class BookGenreViewModel
+    public class BookGenresViewModel
     {
         public IList<Book> Books { get; set; }
         public SelectList Genres { get; set; }

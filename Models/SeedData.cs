@@ -3,16 +3,40 @@ using Microsoft.Extensions.DependencyInjection;
 using BookStore.Data;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
+using BookStore.Areas.Identity.Data;
 
 namespace BookStore.Models;
 
 public static class SeedData
 {
+    public static async Task CreateUserRoles(IServiceProvider serviceProvider)
+    {
+        var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var UserManager = serviceProvider.GetRequiredService<UserManager<BookStoreUser>>();
+        IdentityResult roleResult;
+        //Add Admin Role
+        var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+        if (!roleCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin")); }
+        BookStoreUser user = await UserManager.FindByEmailAsync("admin@mvcmovie.com");
+        if (user == null)
+        {
+            var User = new BookStoreUser();
+            User.Email = "admin@mvcmovie.com";
+            User.UserName = "admin@mvcmovie.com";
+            string userPWD = "Admin123";
+            IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+            //Add default User to Role Admin
+            if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Admin"); }
+        }
+    }
     public static void Initialize(IServiceProvider serviceProvider)
     {
         using (var context = new BookStoreContext(
             serviceProvider.GetRequiredService<DbContextOptions<BookStoreContext>>()))
         {
+            CreateUserRoles(serviceProvider).Wait();
+
             // Look for any movies.
             /*if (context.Author.Any() || context.Book.Any() || context.BookGenre.Any() || context.Genre.Any() || context.Review.Any() || context.UserBooks.Any())
             {
@@ -110,7 +134,7 @@ public static class SeedData
                     NumPages = 252,
                     Description = "The novel, set during the period of the Balkan Wars, World War I and the period after, tells the story of Jon and Velika, a couple living in a village in southern Macedonia. The novel's title translated to couch grass refers to the perseverance and stoicism of Macedonian people through history. In modern day, Pirej is considered to be the author's magnum opus and one of the main and most important works written in Macedonian during the 20th century. ",
                     Publisher = "Tri",
-                    AuthorId = 106,
+                    AuthorId = 1,
                     FrontPage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCQsK7Kn9fkKRzNVHAkD_OTP1JG7FFBvT18BiYp1nnRxjHUS5G",
                     DownloadUrl = "https://www.google.mk/books/edition/Pirej/MGYsAAAAIAAJ?hl=mk&gbpv=1&bsq=%D0%9F%D0%B8%D1%80%D0%B5%D1%98&dq=%D0%9F%D0%B8%D1%80%D0%B5%D1%98&printsec=frontcover",
                 },
@@ -122,7 +146,7 @@ public static class SeedData
                     NumPages = 384,
                     Description = "Solène Marchand, the thirty-nine-year-old owner of an art gallery in Los Angeles, is reluctant to take her daughter, Isabelle, to meet her favorite boy band. But since her divorce, she’s more eager than ever to be close to Isabelle. The last thing Solène expects is to make a connection with one of the members of the world-famous August Moon. But Hayes Campbell is clever, winning, confident, and posh, and the attraction is immediate. That he is all of twenty years old further complicates things.",
                     Publisher = "MacMillan",
-                    AuthorId = 107,
+                    AuthorId = 2,
                     FrontPage = "https://m.media-amazon.com/images/I/41wnlc2dO6L._SY445_SX342_.jpg",
                     DownloadUrl = "https://www.amazon.com/Idea-You-Novel-Robinne-Lee/dp/1250125901",
                 },
@@ -134,7 +158,7 @@ public static class SeedData
                     NumPages = 270,
                     Description = "It’s 1939, and Canada is on the cusp of entering World War II. Seventeen-year-old farm girl Cornelia has been heartbroken since the day her mother died five years ago. As a new tragedy provides Cornelia still more reason to reject her parent’s faith, a mysterious visitor appears in her hour of desperation. Alone and carrying a heavy secret, she makes a desperate choice that will haunt her for years to come. Never telling a soul, Cornelia pours out the painful events of the war in her diary.",
                     Publisher = "Brilliance",
-                    AuthorId = 108,
+                    AuthorId = 3,
                     FrontPage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKfkWYvNLnqB1oidnrQ4NCbiLC9ihXvVaxKZsAhpRhKIlWiwfS",
                     DownloadUrl = "https://www.amazon.com/Silver-Suitcase-Terrie-Todd/dp/1511343842",
                 },
@@ -146,7 +170,7 @@ public static class SeedData
                     NumPages = 1232,
                     Description = "",
                     Publisher = "Penguin Classics",
-                    AuthorId = 109,
+                    AuthorId = 4,
                     FrontPage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUg5qwOTfeSwTf-cJZQCgxsH5SW2y9z_qC4xZBvuZjjJchR6t6",
                     DownloadUrl = "https://www.amazon.com/Miserables-Penguin-Classics-Victor-Hugo/dp/0140444300",
                 },
@@ -158,7 +182,7 @@ public static class SeedData
                     NumPages = 272,
                     Description = "The Comfort Book is a collection of consolations learned in hard times and suggestions for making the bad days better. Drawing on maxims, memoir and the inspirational lives of others, these meditations celebrate the ever-changing wonder of living. This is for when we need the wisdom of a friend or a reminder we can always nurture inner strength and hope, even in our busy world.",
                     Publisher = "Canongate Books",
-                    AuthorId = 110,
+                    AuthorId = 5,
                     FrontPage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKoWnRCzDSD6rX022NadBJSjsS9v_mDPD6UakQNzzWZspw4bR-",
                     DownloadUrl = "https://www.amazon.co.uk/Comfort-Book-Matt-Haig/dp/1786898292",
                 }
@@ -176,6 +200,7 @@ public static class SeedData
                 new Review
                 {
                     /*Id = 1, */
+                    BookId = 1,
                     AppUser = "AnneM",
                     Comment = "Very beautiful and inspirational book!",
                     Rating = 10,
@@ -183,6 +208,7 @@ public static class SeedData
                 new Review
                 {
                     /*Id = 2, */
+                    BookId = 2,
                     AppUser = "TomT",
                     Comment = "Such a romance.",
                     Rating = 9,
@@ -190,6 +216,7 @@ public static class SeedData
                new Review
                {
                    /*Id = 3, */
+                   BookId = 2,
                    AppUser = "Marie",
                    Comment = "What a story! I love it.",
                    Rating = 10,
@@ -197,6 +224,7 @@ public static class SeedData
                new Review
                {
                    /*Id = 4, */
+                   BookId = 3,
                    AppUser = "Ana",
                    Comment = "Breathtaking.",
                    Rating = 10,
@@ -204,11 +232,12 @@ public static class SeedData
                 new Review
                 {
                     /*Id = 5, */
+                    BookId = 5,
                     AppUser = "Nicole",
                     Comment = "It's good!",
                     Rating = 7,
                 }
-             );
+             ); ;
             context.SaveChanges();
             context.BookGenre.AddRange(
                 new BookGenre
@@ -257,6 +286,74 @@ public static class SeedData
                     GenreId = 5
                 }
                 );
+            context.UserBooks.AddRange(
+                      new UserBooks
+                      {
+                          BookId = 1,
+                          AppUser = "User 1"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 1,
+                          AppUser = "User 2"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 2,
+                          AppUser = "User 3"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 3,
+                          AppUser = "User 4"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 3,
+                          AppUser = "User 5"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 3,
+                          AppUser = "User 5"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 4,
+                          AppUser = "User 6"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 5,
+                          AppUser = "User 7"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 5,
+                          AppUser = "TodT"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 1,
+                          AppUser = "Nicole"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 4,
+                          AppUser = "AnneM"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 3,
+                          AppUser = "Marie"
+                      },
+                      new UserBooks
+                      {
+                          BookId = 5,
+                          AppUser = "Nicole"
+                      }
+                  );
+            context.SaveChanges();
 
         }
     }

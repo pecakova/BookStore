@@ -50,8 +50,8 @@
             </dl>
         </div>
         <div> 
-            <a asp-action="Index" class="btn btn-warning"><i class="fa-solid fa-arrow-left"></i>Back</a>
-            <a asp-action="" asp-route-id="@Model?.Id" class="btn btn-primary store-btn float-right mr-5"><i class="fa-solid fa-cart-plus"></i></a>
+            <a asp-action="Index" class="btn" style="border-color: lightcoral"><i class="fa-solid fa-arrow-left"></i>Back</a>
+            <a asp-action="Cart" asp-action="AddToCart" asp-route-id="@Model?.Id" class="btn store-btn float-right mr-5"><i class="fa-solid fa-cart-plus"></i></a>
         </div>
     </div>
     <div class="col-4">

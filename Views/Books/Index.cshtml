@@ -1,24 +1,30 @@
-﻿@model BookStore.ViewModel.BookGenreViewModel
+﻿@model BookStore.ViewModel.BookGenresViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "";
 }
 
 
-    <h1>Index</h1>
+    <h1></h1>
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create"><button type="button" class="btn btn-primary" style="color: lightcoral; background-color: white; border-color: lightcoral">Create New</button></a>
+    </p>
+}
 
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-<form asp-controller="Books" asp-action="Index" method="get">
-    <p>
-        <select asp-for="BookGenre" asp-items="Model.Genres">
-            <option value="">All</option>
-        </select>
-        Title: <input type="text" asp-for="SearchString" />
-        Author: <input type="text" asp-for="AuthorSearchString" />
-        <input type="submit" value="Filter" />
-    </p>
+    <form asp-controller="Books" asp-action="Index" method="get">
+        <p>
+            <label for="title">Title:</label>
+            <input id="title" type="text" asp-for="SearchString" class="form-control" />
+            <label for="author">Author:</label>
+            <input id="author" type="text" asp-for="AuthorSearchString" class="form-control" />
+            <label for="select" class="form-label mt-4">Genre:</label>
+            <select class="form-select" id="select" asp-for="BookGenre" asp-items="Model.Genres">
+                <option value="">All</option>
+            </select>
+            <input style="margin-top: 5px; border-color: lightcoral; color:lightcoral" type="submit" value="Filter" class="btn btn-outline-info" />
+        </p>
     </form>
     <h2 style="text-align: center; font-family: 'Helvetica', sans-serif; font-weight: bold; color: lightcoral; border-bottom: 2px solid lightcoral;">Best Sellers</h2>
     <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
@@ -31,22 +37,16 @@
                     @Html.DisplayNameFor(model => model.Books[0].YearPublished)
                 </th>
                 <th style="margin-left: 3px; padding:2px;">
-                    @Html.DisplayNameFor(model => model.Books[0].NumPages)
-                </th>
-                <th style ="margin-left: 3px; padding:2px;">
-                    @Html.DisplayNameFor(model => model.Books[0].Description)
-                </th>
-                <th style="margin-left: 3px; padding:2px;">
                     @Html.DisplayNameFor(model => model.Books[0].Publisher)
                 </th>
-            <th style="margin-left: 3px; padding:2px;">
-                    @Html.DisplayNameFor(model => model.Books[0].Author)
-                </th>
-            <th style="margin-left: 3px; padding:2px;">
-                    @Html.DisplayNameFor(model => model.Reviews)
-                </th>
-            <th style="margin-left: 3px; padding:2px;">
-                Genre
+                <th style="margin-left: 3px; padding:2px;">
+                        @Html.DisplayNameFor(model => model.Books[0].Author)
+                    </th>
+                <th style="margin-left: 3px; padding:2px;">
+                        @Html.DisplayNameFor(model => model.Reviews)
+                    </th>
+                <th style="margin-left: 3px; padding:2px;">
+                    Genre
                 </th>
                 <th></th>
                 <th></th>
@@ -55,19 +55,13 @@
         <tbody>
             @foreach (var item in Model.Books)
             {
-            <tr heigh:500px style="font-family:'Times New Roman', Times, serif; font-size: 9px; border-bottom: 2px solid lightcoral; margin-left:3px; padding: 2px; text-align:left;">
+            <tr heigh:500px style="font-family:'Times New Roman', Times, serif; font-size: 12px; border-bottom: 2px solid lightcoral; margin-left:3px; padding: 2px; text-align:left;">
                     <td>
-                        <h5 style="font-size: 20px; font-family: 'Times New Roman', serif; font-weight: bold; text-decoration: underline;">@Html.DisplayFor(modelItem => item.Title)</h5>
+                        <h5 style="font-size: 20px; font-family: 'Times New Roman', serif; font-weight: bold; text-decoration: underline; color: lightcoral">@Html.DisplayFor(modelItem => item.Title)</h5>
                         <img style="height: 200px; width: 130px;" src="@Html.DisplayFor(modelItem => item.FrontPage)" />
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.YearPublished)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NumPages)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Publisher)
@@ -91,13 +85,18 @@
                         }
                     </td>
                     <td>
-                        <a href="@Html.DisplayFor(modelItem => item.DownloadUrl)">Download here...</a>
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square" style="color: #df665d; font-size: 27px"></i></a>
+                    }
+                    |
+                    <a asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info" style="color: #df665d; font-size: 27px"></i></a>
+                    |
+ |                  @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash" style="color: #df665d; font-size: 27px"></i></a>
+                    }
+                </td>
                 </tr>
             }
         </tbody>

@@ -1,37 +1,49 @@
-﻿@model IEnumerable<BookStore.Models.Author>
+﻿@model BookStore.ViewModels.BooksAuthorViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1></h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create"><button type="button" class="btn btn-primary" style="color: lightcoral; background-color: white; border-color: lightcoral">Create New</button></a>
+    </p>
+}
+<form asp-controller="Authors" asp-action="Index" method="get">
+    <p>
+        <label for="name">Name:</label>
+        <input id="name" type="text" asp-for="SearchName" class="form-control" />
+        <label for="surname">Surname:</label>
+        <input id="surname" type="text" asp-for="SearchSurname" class="form-control" />
+        <input style="margin-top: 5px; border-color: lightcoral; color: lightcoral" type="submit" value="Filter" class="btn btn-outline-info" />
+    </p>
+</form>
 <table class="table">
     <thead>
-        <tr>
+        <tr style="border-bottom: 2px solid lightcoral;">
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                @Html.DisplayNameFor(model => model.Authors[0].FirstName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                @Html.DisplayNameFor(model => model.Authors[0].LastName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BirthDate)
+                @Html.DisplayNameFor(model => model.Authors[0].BirthDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nationality)
+                @Html.DisplayNameFor(model => model.Authors[0].Nationality)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Gender)
+                @Html.DisplayNameFor(model => model.Authors[0].Gender)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Authors) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.FirstName)
@@ -49,10 +61,17 @@
                 @Html.DisplayFor(modelItem => item.Gender)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square" style="color: #df665d; font-size: 27px"></i></a>
+                    }
+                    |
+                    <a asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info" style="color: #df665d; font-size: 27px"></i></a>
+ |                  @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash" style="color: #df665d; font-size: 27px"></i></a>
+                    }
+                </td>
         </tr>
 }
     </tbody>

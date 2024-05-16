@@ -6,10 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using BookStore.Models;
 using static System.Reflection.Metadata.BlobBuilder;
 using System.Reflection.Emit;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using BookStore.Areas.Identity.Data;
 
 namespace BookStore.Data
 {
-    public class BookStoreContext : DbContext
+    public class BookStoreContext : IdentityDbContext<BookStoreUser>
     {
         public BookStoreContext (DbContextOptions<BookStoreContext> options)
             : base(options)
@@ -22,6 +24,8 @@ namespace BookStore.Data
         public DbSet<BookStore.Models.Review> Review { get; set; } = default!;
         public DbSet<BookStore.Models.UserBooks> UserBooks { get; set; } = default!;
         public DbSet<BookStore.Models.Book> Book { get; set; } = default!;
+        public DbSet<BookStore.Models.CartItem> CartItems { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             // Configure one-to-many relationship between Author and Book
@@ -53,6 +57,9 @@ namespace BookStore.Data
             .WithMany(b => b.UserBooks)
             .HasForeignKey(ub => ub.BookId);
 
+            base.OnModelCreating(builder);
+
         }
+        public DbSet<BookStore.Models.Cart> Cart { get; set; } = default!;
     }
 }
