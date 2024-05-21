@@ -40,18 +40,18 @@
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.Publisher)
-                </dd>                 
-                <dt class="col-sm-3">
+                </dd>       
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {<dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.DownloadUrl)
                 </dt>
                 <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.DownloadUrl)
-                </dd>
+                   <a href="@Html.DisplayFor(model => model.DownloadUrl)">Download</a>
+                </dd>}
             </dl>
         </div>
         <div> 
             <a asp-action="Index" class="btn" style="border-color: lightcoral"><i class="fa-solid fa-arrow-left"></i>Back</a>
-            <a asp-action="Cart" asp-action="AddToCart" asp-route-id="@Model?.Id" class="btn store-btn float-right mr-5"><i class="fa-solid fa-cart-plus"></i></a>
         </div>
     </div>
     <div class="col-4">

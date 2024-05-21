@@ -9,56 +9,94 @@
 <div>
     <h4>Book</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-3">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-9">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-3">
-            @Html.DisplayNameFor(model => model.YearPublished)
-        </dt>
-        <dd class = "col-sm-9">
-            @Html.DisplayFor(model => model.YearPublished)
-        </dd>
-        <dt class = "col-sm-3">
-            @Html.DisplayNameFor(model => model.NumPages)
-        </dt>
-        <dd class = "col-sm-9">
-            @Html.DisplayFor(model => model.NumPages)
-        </dd>
-        <dt class = "col-sm-3">
-            @Html.DisplayNameFor(model => model.AuthorId)
-        </dt>
-        <dd class = "col-sm-9">
-            @Html.DisplayFor(model => model.AuthorId)
-        </dd>
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Publisher)
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.Publisher)
-        </dd>
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.DownloadUrl)
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.DownloadUrl)
-        </dd>
-    </dl>
+    <div style="display: flex; flex-direction:row;">
+        <dl class="row">
+            <dt class = "col-sm-3">
+                @Html.DisplayNameFor(model => model.Title)
+            </dt>
+            <dd class = "col-sm-9">
+                @Html.DisplayFor(model => model.Title)
+            </dd>
+            <dt class = "col-sm-3">
+                @Html.DisplayNameFor(model => model.YearPublished)
+            </dt>
+            <dd class = "col-sm-9">
+                @Html.DisplayFor(model => model.YearPublished)
+            </dd>
+            <dt class = "col-sm-3">
+                @Html.DisplayNameFor(model => model.NumPages)
+            </dt>
+            <dd class = "col-sm-9">
+                @Html.DisplayFor(model => model.NumPages)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Author.FullName)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Author.FullName)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Publisher)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Publisher)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.BookGenres)
+            </dt>
+            <dd class="col-sm-9">
+                @foreach (var genre in Model.BookGenres)
+                {
+                    <p>
+                        @genre.Genre.GenreName
+                    </p>
+                }
+            </dd>
+            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.DownloadUrl)
+                </dt>
+                <dd class="col-sm-9">
+                        <a href="@Html.DisplayFor(model => model.DownloadUrl)">Download here...</a>
+                </dd>
+            }
+            <hr />
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Reviews)
+            </dt>
+            <dd class="col-sm-9">
+                @if (Model.Reviews != null && Model.Reviews.Count > 0)
+                {
+                    @foreach (var review in Model.Reviews)
+                    {
+                        <div class="list-group-item">
+                            <h5 class="mb-1">@review.AppUser</h5>
+                            <p class="mb-1">@review.Comment</p>
+                            <small>Rating: @review.Rating</small>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No reviews yet.</p>
+                }
+            </dd>
+
+        </dl>
+    </div>
 </div>
 <div>
     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
     {
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id"><i class="fa-solid fa-pen-to-square" style="color: #df665d; font-size: 30px"></i></a>
     }
-    |
-    <a asp-action="Index">Back to List</a>
+    
+    <a asp-action="Index" class="btn" style="border-color: lightcoral"><i class="fa-solid fa-arrow-left"></i>Back</a>
 </div>

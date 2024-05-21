@@ -18,7 +18,7 @@
         <input id="name" type="text" asp-for="SearchName" class="form-control" />
         <label for="surname">Surname:</label>
         <input id="surname" type="text" asp-for="SearchSurname" class="form-control" />
-        <input style="margin-top: 5px; border-color: lightcoral; color: lightcoral" type="submit" value="Filter" class="btn btn-outline-info" />
+        <input style="margin-top: 5px; border-color: lightcoral; color: lightcoral" type="submit" value="Filter" class="btn" />
     </p>
 </form>
 <table class="table">
@@ -65,9 +65,9 @@
                     {
                         <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square" style="color: #df665d; font-size: 27px"></i></a>
                     }
-                    |
+                    
                     <a asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info" style="color: #df665d; font-size: 27px"></i></a>
- |                  @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                  @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {
                         <a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash" style="color: #df665d; font-size: 27px"></i></a>
                     }

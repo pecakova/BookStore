@@ -9,11 +9,13 @@
     <link rel="stylesheet" href="~/BookStore.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/Fontawsome/css/all.css"/>
     <link rel="stylesheet" href="~/css/mycss.css" />
+    
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
+            <div class="container-fluid" style="font-size: 20px;">
+                <img src="/images/logo.jpg" style="height: 50px; width:50px; margin-left: 5px;"/>
                 <a class="navbar-brand" asp-area="" asp-controller="Store" asp-action="Index">Book Store</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -33,9 +35,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Authors" asp-action="Index">Authors</a>
                         </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="UserBooks" asp-action="Index">My Books</a>
+                        </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
-                    <a class="nav-link text-dark float-right" asp-area="" asp-controller="Cart" asp-action="Index"><i class="fa-solid fa-cart-shopping"></i></a>
+                   
                 </div>
             </div>
         </nav>

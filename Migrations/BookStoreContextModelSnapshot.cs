@@ -184,31 +184,6 @@ namespace BookStore.Migrations
                     b.ToTable("BookGenre");
                 });
 
-            modelBuilder.Entity("BookStore.Models.CartItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CartId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("CartItems");
-                });
-
             modelBuilder.Entity("BookStore.Models.Genre", b =>
                 {
                     b.Property<int>("Id")
@@ -436,17 +411,6 @@ namespace BookStore.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("Genre");
-                });
-
-            modelBuilder.Entity("BookStore.Models.CartItem", b =>
-                {
-                    b.HasOne("BookStore.Models.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
                 });
 
             modelBuilder.Entity("BookStore.Models.Review", b =>

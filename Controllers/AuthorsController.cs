@@ -56,6 +56,9 @@ namespace BookStore.Controllers
             }
 
             var author = await _context.Author
+                .Include(a => a.Books)
+                .ThenInclude(b => b.BookGenres)
+                .ThenInclude(bg => bg.Genre)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (author == null)
             {
@@ -147,6 +150,9 @@ namespace BookStore.Controllers
             }
 
             var author = await _context.Author
+                .Include(a => a.Books)
+                .ThenInclude(b => b.BookGenres)
+                .ThenInclude(bg => bg.Genre)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (author == null)
             {

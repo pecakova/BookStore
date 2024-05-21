@@ -11,17 +11,24 @@ using BookStore.ViewModels;
 using BookStore.ViewModel;
 using static System.Reflection.Metadata.BlobBuilder;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
+
 
 namespace BookStore.Controllers
 {
     public class BooksController : Controller
     {
         private readonly BookStoreContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public BooksController(BookStoreContext context)
+        public BooksController(BookStoreContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
+        
+
 
         // GET: Books
         public async Task<IActionResult> Index(string bookGenre, string searchString, string authorSearchString)
@@ -125,6 +132,36 @@ namespace BookStore.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (viewModel.FrontPageFile != null && viewModel.FrontPageFile.Length > 0)
+                {
+                    string uploadsFolder = Path.Combine(_environment.WebRootPath, "images");
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + viewModel.FrontPageFile.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await viewModel.FrontPageFile.CopyToAsync(fileStream);
+                    }
+
+                    // Save file path in the database
+                    viewModel.Book.FrontPage = "/images/" + uniqueFileName;
+                    //book.FrontPage = filePath;
+                }
+                if (viewModel.PdfFile != null && viewModel.PdfFile.Length > 0)
+                {
+                    string uploadsFolder = Path.Combine(_environment.WebRootPath, "images");
+                    string uniquePdfFileName = Guid.NewGuid().ToString() + "_" + viewModel.PdfFile.FileName;
+                    string pdfFilePath = Path.Combine(uploadsFolder, uniquePdfFileName);
+
+                    using (var pdfFileStream = new FileStream(pdfFilePath, FileMode.Create))
+                    {
+                        await viewModel.PdfFile.CopyToAsync(pdfFileStream);
+                    }
+
+                    // Save PDF file path in the database
+                    viewModel.Book.DownloadUrl = "/images/" + uniquePdfFileName;
+                    //book.DownloadURL = pdfFilePath;
+                }
                 try
                 {
                     _context.Update(viewModel.Book);
@@ -212,6 +249,43 @@ namespace BookStore.Controllers
             {
                 try
                 {
+                    if (viewModel.FrontPageFile != null && viewModel.FrontPageFile.Length > 0)
+                    {
+                        // Save FrontPageFile
+                        string uniqueFrontPageFileName = Guid.NewGuid().ToString() + "_" + viewModel.FrontPageFile.FileName;
+                        string frontPageFilePath = Path.Combine(_environment.WebRootPath, "images", uniqueFrontPageFileName);
+
+                        using (var fileStream = new FileStream(frontPageFilePath, FileMode.Create))
+                        {
+                            await viewModel.FrontPageFile.CopyToAsync(fileStream);
+                        }
+
+                        viewModel.Book.FrontPage = "/images/" + uniqueFrontPageFileName; // Update file path
+                    }
+                    if (viewModel.PdfFile != null && viewModel.PdfFile.Length > 0)
+                    {
+                        // Save PdfFile
+                        string uniquePdfFileName = Guid.NewGuid().ToString() + "_" + viewModel.PdfFile.FileName;
+                        string pdfFilePath = Path.Combine(_environment.WebRootPath, "images", uniquePdfFileName);
+
+                        using (var fileStream = new FileStream(pdfFilePath, FileMode.Create))
+                        {
+                            await viewModel.PdfFile.CopyToAsync(fileStream);
+                        }
+
+                        viewModel.Book.DownloadUrl = "/images/" + uniquePdfFileName; // Update file path
+                    }
+
+                    // If FrontPageFile and PdfFile are not uploaded, retain the existing values
+                    if (viewModel.FrontPageFile == null && viewModel.PdfFile == null)
+                    {
+                        var existingBook = _context.Book.AsNoTracking().FirstOrDefault(b => b.Id == id);
+                        if (existingBook != null)
+                        {
+                            viewModel.Book.FrontPage = existingBook.FrontPage;
+                            viewModel.Book.DownloadUrl = existingBook.DownloadUrl;
+                        }
+                    }
                     _context.Update(viewModel.Book);
                     await _context.SaveChangesAsync();
 
@@ -298,6 +372,26 @@ namespace BookStore.Controllers
         private bool BooksExists(int id)
         {
             return _context.Book.Any(e => e.Id == id);
+        }
+        public IActionResult ViewFile(string fileName)
+        {
+            var filePath = Path.Combine(_environment.WebRootPath, "images", fileName);
+            if (System.IO.File.Exists(filePath))
+            {
+                var provider = new FileExtensionContentTypeProvider();
+                if (provider.TryGetContentType(fileName, out var contentType))
+                {
+                    return PhysicalFile(filePath, contentType);
+                }
+                else
+                {
+                    return PhysicalFile(filePath, "application/octet-stream"); // Default to octet-stream if MIME type cannot be determined
+                }
+            }
+            else
+            {
+                return NotFound(); // Return 404 if the file does not exist
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ namespace BookStore.Models
 {
     public class Author
     {
+        [Display(Name = "AuthorId")]
         public int Id { get; set; }
         [Required]
         [StringLength(50)]

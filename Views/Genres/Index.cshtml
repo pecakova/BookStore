@@ -23,19 +23,20 @@
     <tbody>
 @foreach (var item in Model) {
             <tr style="border-bottom: 2px solid lightcoral;">
+            
             <td>
                 @Html.DisplayFor(modelItem => item.GenreName)
             </td>
             <td>
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {
-                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square" style="color: #df665d; font-size: 27px"></i></a>}|
-                    <a asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info" style="color: #df665d; font-size: 27px"></i></a> |
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square" style="color: #df665d; font-size: 27px"></i></a>}
+                    <a asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info" style="color: #df665d; font-size: 27px"></i></a> 
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {
                         <a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash" style="color: #df665d; font-size: 27px"></i></a>
                     }
-                </td>
+             </td>
         </tr>
 }
     </tbody>

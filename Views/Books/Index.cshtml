@@ -1,7 +1,8 @@
 ﻿@model BookStore.ViewModel.BookGenresViewModel
 
 @{
-    ViewData["Title"] = "";
+    ViewData["Title"] = "Index";
+    var showAlert = false;
 }
 
 
@@ -23,7 +24,7 @@
             <select class="form-select" id="select" asp-for="BookGenre" asp-items="Model.Genres">
                 <option value="">All</option>
             </select>
-            <input style="margin-top: 5px; border-color: lightcoral; color:lightcoral" type="submit" value="Filter" class="btn btn-outline-info" />
+            <input style="margin-top: 5px; border-color: lightcoral; color:lightcoral" type="submit" value="Filter" class="btn" />
         </p>
     </form>
     <h2 style="text-align: center; font-family: 'Helvetica', sans-serif; font-weight: bold; color: lightcoral; border-bottom: 2px solid lightcoral;">Best Sellers</h2>
@@ -44,11 +45,10 @@
                     </th>
                 <th style="margin-left: 3px; padding:2px;">
                         @Html.DisplayNameFor(model => model.Reviews)
-                    </th>
+                </th>
                 <th style="margin-left: 3px; padding:2px;">
                     Genre
                 </th>
-                <th></th>
                 <th></th>
             </tr>
         </thead>
@@ -85,14 +85,13 @@
                         }
                     </td>
                     <td>
-                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        @if ((User.Identity.IsAuthenticated && User.IsInRole("Admin")))
                     {
                         <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square" style="color: #df665d; font-size: 27px"></i></a>
                     }
-                    |
+                    
                     <a asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info" style="color: #df665d; font-size: 27px"></i></a>
-                    |
- |                  @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {
                         <a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash" style="color: #df665d; font-size: 27px"></i></a>
                     }

@@ -7,22 +7,44 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookStore.Data;
 using BookStore.Models;
+using Microsoft.AspNetCore.Identity;
+using BookStore.Areas.Identity.Data;
 
 namespace BookStore.Controllers
 {
     public class UserBooksController : Controller
     {
         private readonly BookStoreContext _context;
+        private readonly UserManager<BookStoreUser> _userManager;
 
-        public UserBooksController(BookStoreContext context)
+        public UserBooksController(BookStoreContext context, UserManager<BookStoreUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: UserBooks
         public async Task<IActionResult> Index()
         {
-            return View(await _context.UserBooks.ToListAsync());
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+            var name = user.Email;
+
+            var userBooks = await _context.UserBooks
+                .Include(u => u.Book)
+                    .ThenInclude(b => b.BookGenres)
+                        .ThenInclude(bg => bg.Genre)
+                .Include(u => u.Book)
+                    .ThenInclude(b => b.Author)
+                .Include(u => u.Book)
+                    .ThenInclude(b => b.Reviews)
+                .Where(ub => ub.AppUser == name)
+                .ToListAsync();
+
+            return View(userBooks);
         }
 
         // GET: UserBooks/Details/5
@@ -33,12 +55,23 @@ namespace BookStore.Controllers
                 return NotFound();
             }
 
-            var userBooks = await _context.UserBooks
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (userBooks == null)
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null)
             {
-                return NotFound();
+                return NotFound("User not found");
             }
+            var name = user.Email;
+
+            var userBooks = await _context.UserBooks
+                .Include(u => u.Book)
+                    .ThenInclude(b => b.BookGenres)
+                        .ThenInclude(bg => bg.Genre)
+                .Include(u => u.Book)
+                    .ThenInclude(b => b.Author)
+                .Include(u => u.Book)
+                    .ThenInclude(b => b.Reviews)
+                .Where(ub => ub.AppUser == name)
+                .FirstOrDefaultAsync(b => b.Book.Id == id);
 
             return View(userBooks);
         }
@@ -152,6 +185,32 @@ namespace BookStore.Controllers
         private bool UserBooksExists(int id)
         {
             return _context.UserBooks.Any(e => e.Id == id);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int id, string input, int rating)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+            var name = user.Email;
+
+            var book = await _context.Book.FirstOrDefaultAsync(e => e.Id == id);
+
+            var review = new Review
+            {
+                BookId = book.Id,
+                AppUser = name,
+                Comment = input,
+                Rating = rating,
+                Book = book
+            };
+
+            _context.Review.Add(review);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

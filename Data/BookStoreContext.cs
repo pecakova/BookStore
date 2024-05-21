@@ -24,7 +24,6 @@ namespace BookStore.Data
         public DbSet<BookStore.Models.Review> Review { get; set; } = default!;
         public DbSet<BookStore.Models.UserBooks> UserBooks { get; set; } = default!;
         public DbSet<BookStore.Models.Book> Book { get; set; } = default!;
-        public DbSet<BookStore.Models.CartItem> CartItems { get; set; }
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -60,6 +59,6 @@ namespace BookStore.Data
             base.OnModelCreating(builder);
 
         }
-        public DbSet<BookStore.Models.Cart> Cart { get; set; } = default!;
+       
     }
 }

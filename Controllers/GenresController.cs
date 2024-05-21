@@ -22,7 +22,11 @@ namespace BookStore.Controllers
         // GET: Genres
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Genre.ToListAsync());
+            var genres = await _context.Genre
+                .Include(bg => bg.BookGenres)
+                .ThenInclude(b => b.Book)
+                .ToListAsync();
+            return View(genres);
         }
 
         // GET: Genres/Details/5
@@ -34,6 +38,8 @@ namespace BookStore.Controllers
             }
 
             var genre = await _context.Genre
+                .Include(bg => bg.BookGenres)
+                .ThenInclude(b => b.Book)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (genre == null)
             {

@@ -41,29 +41,27 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Publisher)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FrontPage)
+        <dt class="col-sm-2">
+            Author
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FrontPage)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.FullName)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DownloadUrl)
+        <dt class="col-sm-2">
+            Genres
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DownloadUrl)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AuthorId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AuthorId)
+        <dd class="col-sm-10">
+            @{
+                var genreNames = string.Join(", ", Model.BookGenres.Select(g => g.Genre.GenreName));
+            }
+
+            <p>@genreNames</p>
         </dd>
     </dl>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Delete" class="btn btn-danger" /> 
+        <a asp-action="Index" class="btn" style="border-color: lightcoral"><i class="fa-solid fa-arrow-left"></i>Back</a>
     </form>
 </div>

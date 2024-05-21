@@ -2,40 +2,37 @@
 
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h2 style="text-align: center; font-family: 'Helvetica', sans-serif; font-weight: bold; color: lightcoral; border-bottom: 2px solid lightcoral;">Your Books</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.AppUser)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BookId)
-            </th>
+            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Book.Title)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AppUser)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img height="150px" src="@Html.DisplayFor(modelItem => item.Book.FrontPage)" alt="Book cover">
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Book.Title)</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Book.Id"><i class="fa-solid fa-circle-info" style="color: #df665d; font-size: 27px"></i></a>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <p></p>
+                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash" style="color: #df665d; font-size: 27px"></i></a>
+                    }
+             
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
